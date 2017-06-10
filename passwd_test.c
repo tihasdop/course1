@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include <unzip.h>
+#include "unzip_minizip.h"
 #include "decrypt.h"
 
 //REMOVE IT it's for testing
@@ -14,28 +14,50 @@ const int header_len = 12;
 int
 unzip_test(char *path, char *password)
 {
-	char *argv[5];
-	UzpInit uzpi;
+	int result;
 
-	argv[0] = "unzip";
-	argv[1] = "-t";
+	char *full_path = realpath(path, NULL);
+	unzFile zipfile = unzOpen(full_path);
+	free(full_path);
 
-	size_t password_size = strlen(password) + 1;
-	char *pwbuf = malloc(sizeof(char) * (password_size + 2);
-	pwbuf[0] = '-'; pwbuf[1] = 'P';
-	memcpy(pwbuf + 2, password, sizeof(char) * password_size);
+	if (!zipfile) {
+		printf("Error while unzip test! (zip opening)\n");
+		exit(1);
+	}
 
-	argv[2] = pwbuf;
-	argv[3] = path;
-	argv[4] = NULL;
+	if (unzGoToFirstFile(zipfile) != UNZ_OK) {
+		printf("Error while unzip test! (file searching)\n");
+		exit(1);
+	}
 
-	uzpi.msgfn = UzpMessageNull;
-	uzpi.structlen = ; //TODO
+	unz_file_info file_info;
+	if (unzGetCurrentFileInfo(zipfile, &file_info, NULL, 0, NULL, 0, NULL, 0) != UNZ_OK) {
+		printf("Error while unzip test! (file info reading)\n");
+		exit(1);
+	}
+	DEBUG(printf("DEBUG: uncomp_size=%lu\n", file_info.uncompressed_size));
 
-	if (UzpAltMain(4, argv, &uzpi) == EXIT_SUCCESS)
-		return 0;
+	if (unzOpenCurrentFilePassword(zipfile, password) != UNZ_OK) {
+		printf("Error while unzip test! (file opening)\n");
+		exit(1);
+	}
 
-	return 1;
+	unsigned char *dumb_buf = malloc(file_info.uncompressed_size);
+	if (unzReadCurrentFile(zipfile, dumb_buf, file_info.uncompressed_size) != file_info.uncompressed_size) {
+		printf("Error while unzip test! (file reading)\n");
+		exit(1);
+	}
+	free(dumb_buf);
+
+	if (unzCloseCurrentFile(zipfile) != UNZ_CRCERROR) {
+		result = 1;
+	} else {
+		result = 0;
+	}
+	DEBUG(printf("DEBUG: result=%d\n", result));
+
+	unzClose(zipfile);
+	return result;
 }
 
 int

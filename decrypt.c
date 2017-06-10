@@ -12,9 +12,9 @@ const unsigned init_keys[] = {
 void
 update_keys(unsigned *keys, unsigned char c)
 {
-	keys[0]  = crc32(keys[0], c);
+	keys[0]  = crc32__(keys[0], c);
 	keys[1]  = (keys[1] + (unsigned char)keys[0]) * 134775813 + 1;
-	keys[2]  = crc32(keys[2], keys[1] >> 24);
+	keys[2]  = crc32__(keys[2], keys[1] >> 24);
 }
 
 unsigned char

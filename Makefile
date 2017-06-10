@@ -2,9 +2,9 @@ PROGRAM = ziphack
 C_FILES := $(wildcard *.c)
 OBJS := $(patsubst %.c, %.o, $(C_FILES))
 CC = gcc
-CFLAGS = -Wall -Werror -pedantic -g -std=c99
+CFLAGS = -Wall -Werror -pedantic -g -std=gnu99
 LDFLAGS =
-LDLIBS =
+LDLIBS = -lz
 
 all: $(PROGRAM)
 
