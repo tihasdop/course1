@@ -1,6 +1,3 @@
-//REMOVE IT
-#include <stdio.h>
-
 #include "crc32.h"
 
 const unsigned crc32_table[256] = {
@@ -82,6 +79,5 @@ crc32_arr(const unsigned char * buf, size_t len)
 unsigned
 crc32__(unsigned old_crc, unsigned char c)
 {
-	//printf("CRC WORKS\n");
 	return crc32_table[((unsigned char)old_crc ^ c) & 0xFF] ^ (old_crc >> 8);
 }

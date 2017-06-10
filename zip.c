@@ -7,7 +7,6 @@
 
 //REMOVE IT: it's for testing
 #include "decrypt.h"
-#include "crc32.h"
 
 const int eocd_sig = 0x06054b50;
 const unsigned file_entries_count_start = 20;
@@ -98,11 +97,6 @@ get_encryption_header(FILE *zipfile, unsigned file_offset, struct file_brute *fi
 	unsigned len2header;
 	unsigned short tmp, flag;
 
-#if 0 //DEBUG
-	unsigned file_size;
-	fseek(zipfile, file_offset + 18, SEEK_SET);
-	fread_m(&file_size, sizeof(file_size), 1, zipfile);
-#endif
 	// seek for 'general purpose bit flag'
 	fseek(zipfile, file_offset + 6, SEEK_SET);
 	fread_m(&flag, sizeof(flag), 1, zipfile);
@@ -134,21 +128,6 @@ get_encryption_header(FILE *zipfile, unsigned file_offset, struct file_brute *fi
 	fseek(zipfile, len2header, SEEK_CUR);
 	fread_m(file->enc_header, sizeof(file->enc_header[0]), 12, zipfile);
 
-#if 0 //DEBUG
-	unsigned char *file = malloc(sizeof(unsigned char) * file_size);
-	unsigned char *file_dec = malloc(sizeof(unsigned char) * file_size);
-	fread_m(file, sizeof(unsigned char), file_size, zipfile);
-	decrypt("0000", file, file_size, file_dec);
-	unsigned dec_crc = crc32_arr(file_dec, file_size);
-	DEBUG(printf("  DEBUG: file_dec CRC32=0x%X\n", dec_crc));
-	DEBUG(printf("DEBUG: file:\n"));
-	for (unsigned i = 0; i < file_size; ++i) {
-		DEBUG(printf("0x%hhX, ", file[i]));
-	}
-	DEBUG(printf("\n"));
-	free(file);
-	free(file_dec);
-#endif
 	DEBUG(printf("DEBUG: header:\n\t"));
 	for (unsigned i = 0; i < 12; ++i) {
 		DEBUG(printf("0x%.2hhX ", file->enc_header[i]));
