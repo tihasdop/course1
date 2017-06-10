@@ -27,7 +27,7 @@ main(int argc, char *argv[])
 	unsigned files_count;
 	struct file_brute *files = zip_parse(zipfile, &files_count);
 
-	passgen_init();
+	passgen_init(PgOptDigAndLet);
 	char *passwd;
 	int correct;
 	while ((passwd = passgen_get()) != NULL) {
@@ -48,7 +48,7 @@ main(int argc, char *argv[])
 			break;
 		}
 
-		free(passwd);
+		//free(passwd);
 	}
 
 	if (!correct)
