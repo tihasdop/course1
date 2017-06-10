@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 struct file_brute {
-	unsigned crc32;
+	unsigned chkbyte;
 	unsigned char enc_header[12];
 };
 

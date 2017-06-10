@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 
-int is_correct_passwd(char *password, unsigned char *header, unsigned crc);
+int unzip_test(char *path, char *password);
+int header_test(char *password, unsigned char *header, unsigned char chkbyte);
 
 #endif

@@ -79,5 +79,5 @@ crc32_arr(const unsigned char * buf, size_t len)
 unsigned
 crc32(unsigned old_crc, unsigned char c)
 {
-	return crc32_table[(old_crc ^ (unsigned)(c)) & 0xFF] ^ (old_crc >> 8);
+	return crc32_table[((unsigned char)old_crc ^ c) & 0xFF] ^ (old_crc >> 8);
 }
