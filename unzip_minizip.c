@@ -2011,8 +2011,8 @@ extern int ZEXPORT unzCloseCurrentFile (unzFile file)
         if (pfile_in_zip_read_info->crc32 != pfile_in_zip_read_info->crc32_wait)
             err=UNZ_CRCERROR;
     }
-	//REMOVE IT
-	printf("crc32=%.8lX\tcrc_wait=%.8lX\n", pfile_in_zip_read_info->crc32, pfile_in_zip_read_info->crc32_wait);
+
+	//printf("crc32=%.8lX\tcrc_wait=%.8lX\n", pfile_in_zip_read_info->crc32, pfile_in_zip_read_info->crc32_wait);
 
 
     TRYFREE(pfile_in_zip_read_info->read_buffer);
