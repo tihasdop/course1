@@ -2,9 +2,6 @@
 
 #include "crc32.h"
 
-//REMOVE IT: it's for testing
-#include "debug.h"
-
 const unsigned init_keys[] = {
 	305419896, 591751049, 878082192
 };
@@ -36,7 +33,6 @@ decrypt(char *password, unsigned char data[], size_t data_len, unsigned char dec
 	while ((c = *password++)) {
 		update_keys(keys, c);
 	}
-	//DEBUG(printf("DEBUG: pre keys: 0x%.2X 0x%.2X 0x%.2X\n", keys[0], keys[1], keys[2]));
 
 	unsigned i;
 	for (i = 0; i < (data_len - 1); ++i) {
@@ -44,5 +40,4 @@ decrypt(char *password, unsigned char data[], size_t data_len, unsigned char dec
 		update_keys(keys, dec_data[i]);
 	}
 	dec_data[i] = data[i] ^ decrypt_byte(keys[2]);
-	//DEBUG(printf("DEBUG: final keys: 0x%.8X 0x%.8X 0x%.8X\n", keys[0], keys[1], keys[2]));
 }
