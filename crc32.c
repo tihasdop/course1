@@ -68,15 +68,6 @@ const unsigned crc32_table[256] = {
 };
 
 unsigned
-crc32_arr(const unsigned char * buf, size_t len)
-{
-    unsigned crc = 0xFFFFFFFF;
-    while (len--)
-		crc = crc32__(crc, *buf++);
-    return crc ^ 0xFFFFFFFF;
-}
-
-unsigned
 crc32__(unsigned old_crc, unsigned char c)
 {
 	return crc32_table[((unsigned char)old_crc ^ c) & 0xFF] ^ (old_crc >> 8);
