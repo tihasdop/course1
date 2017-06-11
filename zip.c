@@ -1,16 +1,11 @@
 #include "zip.h"
 
 #include <stdlib.h>
-#include <errno.h>
 
 #include "debug.h"
 
-//REMOVE IT: it's for testing
-#include "decrypt.h"
-
 const int eocd_sig = 0x06054b50;
-const unsigned file_entries_count_start = 20;
-const double file_entries_count_mult = 1.5;
+const unsigned file_entries_count_max = 5;
 
 void
 fread_m(void *ptr, size_t size, size_t nmemb, FILE *stream)
@@ -52,13 +47,11 @@ get_file_offsets(FILE *zipfile, unsigned cd_offset, unsigned *files_count)
 	// seek for start of central directory (after signature)
 	fseek(zipfile, cd_offset + sizeof(tmp), SEEK_SET);
 
-	unsigned files_size = file_entries_count_start;
-	unsigned *files = malloc(sizeof(unsigned) * files_size);
+	unsigned *files = malloc(sizeof(unsigned) * file_entries_count_max);
 
 	do {
-		if (cur_file >= files_size) {
-			files_size = (unsigned)(files_size * file_entries_count_mult);
-			files = realloc(files, files_size * sizeof(unsigned));
+		if (cur_file >= file_entries_count_max) {
+			break; // if max files count reached
 		}
 
 		// seek for 'file name length'
@@ -127,12 +120,6 @@ get_encryption_header(FILE *zipfile, unsigned file_offset, struct file_brute *fi
 	// seek for encryption header
 	fseek(zipfile, len2header, SEEK_CUR);
 	fread_m(file->enc_header, sizeof(file->enc_header[0]), 12, zipfile);
-
-	DEBUG(printf("DEBUG: header:\n\t"));
-	for (unsigned i = 0; i < 12; ++i) {
-		DEBUG(printf("0x%.2hhX ", file->enc_header[i]));
-	}
-	DEBUG(printf("\n"));
 }
 
 struct file_brute *
