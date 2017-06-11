@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-//#define DEBUG_OFF
+#define DEBUG_OFF
 
 #ifdef DEBUG_OFF
 #define DEBUG(P) \
