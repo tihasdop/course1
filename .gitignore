@@ -4,7 +4,7 @@
 !*.h
 !Makefile
 !LICENSE
-!/zip
-!/zip/*
+!/test
+!/test/*
 !/doc
 !/doc/*
