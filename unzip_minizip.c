@@ -76,6 +76,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
+#include "debug.h"
 
 #ifndef local
 #  define local static
@@ -2012,7 +2013,7 @@ extern int ZEXPORT unzCloseCurrentFile (unzFile file)
             err=UNZ_CRCERROR;
     }
 
-	//printf("crc32=%.8lX\tcrc_wait=%.8lX\n", pfile_in_zip_read_info->crc32, pfile_in_zip_read_info->crc32_wait);
+	DEBUG(printf("crc32=%.8lX\tcrc_wait=%.8lX\n", pfile_in_zip_read_info->crc32, pfile_in_zip_read_info->crc32_wait));
 
 
     TRYFREE(pfile_in_zip_read_info->read_buffer);
