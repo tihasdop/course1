@@ -6,14 +6,16 @@
 #include "unzip_minizip.h"
 #include "decrypt.h"
 
-//REMOVE IT it's for testing
 #include "debug.h"
+
+#define DUMB_BUF_SIZE 100
 
 const int header_len = 12;
 
 int
 unzip_test(char *path, char *password)
 {
+	printf("'%s' is a possible password\n", password);
 	int result;
 
 	char *full_path = realpath(path, NULL);
@@ -31,7 +33,9 @@ unzip_test(char *path, char *password)
 	}
 
 	unz_file_info file_info;
-	if (unzGetCurrentFileInfo(zipfile, &file_info, NULL, 0, NULL, 0, NULL, 0) != UNZ_OK) {
+	//REMOVE IT
+	char filename[100];
+	if (unzGetCurrentFileInfo(zipfile, &file_info, filename, 100, NULL, 0, NULL, 0) != UNZ_OK) {
 		printf("Error while unzip test! (file info reading)\n");
 		exit(1);
 	}
@@ -42,17 +46,18 @@ unzip_test(char *path, char *password)
 		exit(1);
 	}
 
-	unsigned char *dumb_buf = malloc(file_info.uncompressed_size);
-	if (unzReadCurrentFile(zipfile, dumb_buf, file_info.uncompressed_size) != file_info.uncompressed_size) {
-		printf("Error while unzip test! (file reading)\n");
-		exit(1);
-	}
-	free(dumb_buf);
+	unsigned char dumb_buf[DUMB_BUF_SIZE];
+	int res;
+	do {
+		res = unzReadCurrentFile(zipfile, dumb_buf, DUMB_BUF_SIZE);
+		if (res < 0)
+			break;
+	} while (res > 0);
 
-	if (unzCloseCurrentFile(zipfile) != UNZ_CRCERROR) {
-		result = 1;
-	} else {
+	if ((unzCloseCurrentFile(zipfile) == UNZ_CRCERROR) || (res < 0)) { // if error
 		result = 0;
+	} else {
+		result = 1;
 	}
 	DEBUG(printf("DEBUG: result=%d\n", result));
 
